@@ -1,22 +1,22 @@
 package org.oa.ajax_rest_demo;
 
 import org.oa.ajax_rest_demo.dao.StorageSession;
-import org.oa.ajax_rest_demo.model.Book;
+import org.oa.ajax_rest_demo.model.Pet;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/books")
-public class BookService {
+@Path("/pets")
+public class PetService {
 
     @GET
     @Produces("application/json")
     public Response getAll() {
         StorageSession session = StorageSession.getInstance();
 
-        List<Book> books = session.getBookDao().loadAll();
+        List<Pet> books = session.getPetDao().loadAll();
         return Response.ok(books,
                 MediaType.APPLICATION_JSON_TYPE).build();
     }
@@ -24,11 +24,11 @@ public class BookService {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response add(Book book) {
+    public Response add(Pet pet) {
         StorageSession session = StorageSession.getInstance();
-        
-        Book newBook = session.getBookDao().create(book);
-        return Response.ok(newBook,
+
+        Pet newPet = session.getPetDao().create(pet);
+        return Response.ok(newPet,
                 MediaType.APPLICATION_JSON_TYPE).build();
     }
 
@@ -36,25 +36,24 @@ public class BookService {
     @PUT
     @Consumes("application/json")
     @Produces("application/json")
-    public Response update(Book book) {
+    public Response update(Pet pet) {
         StorageSession session = StorageSession.getInstance();
 
-        Book newBook = session.getBookDao().update(book);
-        return Response.ok(newBook,
+        Pet newPet = session.getPetDao().update(pet);
+        return Response.ok(newPet,
                 MediaType.APPLICATION_JSON_TYPE).build();
     }
 
-    @Path("{id}")
     @DELETE
     @Produces("application/json")
+    @Path("{id}")
     public Response delete(@PathParam("id") long id) {
         StorageSession session = StorageSession.getInstance();
 
-        Book book = session.getBookDao().findById(id);
+        Pet pet = session.getPetDao().findById(id);
+        session.getPetDao().delete(pet);
 
-        session.getBookDao().delete(book);
-
-        return Response.ok(book,
+        return Response.ok(pet,
                 MediaType.APPLICATION_JSON_TYPE).build();
     }
 }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+</head>
+<body>
+<script type="application/javascript">
+    $.getJSON("api/books", function (data) {
+        var trHTML = '';
+        $.each(data, function (index, value) {
+            trHTML += '<tr><td>' + value.name + '</td><td>' + value.author + '</td><td>' + value.year + '</td></tr>';
+        });
+        $('#books_table').append(trHTML);
+    });
+    $(document).ready(function () {
+        $("#btn_create").click(function () {
+            var name = $('input[name="name"]').val();
+            var author = $('input[name="author"]').val();
+            var year = $('input[name="year"]').val();
+            var book = {
+                name : name,
+                author : author,
+                year : year
+            };
+            var data = JSON.stringify(book);
+            console.log("send - " + data);
+            $.ajax({
+                type: "POST",
+                url: "api/books",
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(value){
+                    var trHTML = '<tr><td>' + value.name + '</td><td>' + value.author + '</td><td>' + value.year + '</td></tr>';
+                    $('#books_table').append(trHTML);
+                }
+            });
+        });
+    });
+</script>
+<table id="books_table" border='1'>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Year</th>
+    </tr>
+</table>
+
+<form id="create_form">
+    <p>Name of book : </p>
+    <input type="text" name="name"/>
+    <p>Author of book : </p>
+    <input type="text" name="author"/>
+    <p>Year of publishing : </p>
+    <input type="text" name="year"/>
+</form>
+<br/>
+<button id="btn_create">Create</button>
+</body>
+</html>

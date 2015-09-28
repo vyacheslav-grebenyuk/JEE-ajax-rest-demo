@@ -14,6 +14,9 @@ public class Book {
     private int year;
     @XmlElement
     private String author;
+    
+    public Book() {
+  	}
 
     public Book(long id, String name, int year, String author) {
         this.id = id;
