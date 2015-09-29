@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pet shop</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+</head>
+<body>
+<script type="application/javascript">
+	var update_id;
+	function delline(id){
+        console.log("delete - " + id);
+        if (confirm('Are you sure?')){
+			$.ajax({url: 'api/foods/' + id,
+				    type: 'DELETE',
+			    	success: function(result) {
+			    		$("#" + id).remove();
+			    		alert('Pet ' + result.name + ' deleted.');
+			    	}
+			});
+        }
+	}
+	function updline(id){
+        console.log("update init - " + id);
+		$("#btn_create").hide();
+		$("#btn_update").show();
+		$("#btn_cancel").show();
+        $("#input_name").val($("#" + id + " .name").text());
+        $("#input_price").val($("#" + id + " .price").text());
+        $(".btn_x").attr("disabled", "disabled");
+        update_id = id;
+	}
+    $.getJSON("api/foods", function (data) {
+        console.log("get - " + data);
+        var trHTML = '';
+        $.each(data, function (index, value) {
+            trHTML += '<tr id="' + value.idFood + '"><td class="name">' + value.name + '</td><td class="price">' + value.price +
+            '</td><td><button class="btn_x" onclick="delline(' + value.idFood + ')">X</button>' +
+            '<button class="btn_u" onclick="updline(' + value.idFood + ')">U</button></td></tr>';
+        });
+
+        $('#foods_table').append(trHTML);
+    });
+    $(document).ready(function () {
+        $("#btn_cancel").click(function () {
+    		$("#btn_create").show();
+    		$("#btn_update").hide();
+    		$("#btn_cancel").hide();
+            $('#input_name').val('');
+            $('#input_price').val('');
+            $(".btn_x").removeAttr("disabled");
+            update_id = 0;
+        });
+        $("#btn_create").click(function () {
+            var name = $('input[name="name"]').val();
+            var price = $('input[name="price"]').val();
+            var food = {
+                name : name,
+                price : price
+            };
+            var data = JSON.stringify(pet);
+            console.log("add - " + data);
+            $.ajax({
+                type: "POST",
+                url: "api/foods",
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(value){
+                    var trHTML = '<tr id="' + value.idFood + '"><td class="name">' + value.name + '</td><td class="price">' + value.price +
+                    '</td><td><button class="btn_x" onclick="delline(' + value.idFood + ')">X</button>' +
+                    '<button class="btn_u" onclick="updline(' + value.idFood + ')">U</button></td></tr>';
+                    $('#foods_table').append(trHTML);
+                    $('#input_name').val('');
+                    $('#input_price').val('');
+                }
+            });
+        });
+        $("#btn_update").click(function () {
+            var name = $('input[name="name"]').val();
+            var price = $('input[name="price"]').val();
+            var idfood = update_id;
+            var pet = {
+            	idFood : idfood,
+                name : name,
+                price : price
+            };
+            var data = JSON.stringify(pet);
+            console.log("update - " + data);
+            $.ajax({
+                type: "PUT",
+                url: "api/foods",
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(value){
+                    var trHTML = '<td class="name">' + value.name + '</td><td class="price">' + value.price +
+                    '</td><td><button class="btn_x" onclick="delline(' + value.idFood + ')">X</button>' +
+                    '<button class="btn_u" onclick="updline(' + value.idFood + ')">U</button></td>';
+                    $('#' + update_id).html(trHTML);
+            		$("#btn_create").show();
+            		$("#btn_update").hide();
+            		$("#btn_cancel").hide();
+                    $(".btn_x").removeAttr("disabled");
+                    $('#input_name').val('');
+                    $('#input_price').val('');
+                    update_id = 0;
+                }
+            });
+        });
+    });
+</script>
+<table id="foods_table" border='1'>
+    <tr>
+        <th>Food</th>
+        <th>Price</th>
+        <th>Commands</th>
+    </tr>
+</table>
+
+<form id="create_form" action="api/foods" method="post">
+    <p>Food Name:</p>
+    <input id="input_name" type="text" name="name"/>
+    <p>Food Price :</p>
+    <input id="input_price" type="text" name="price"/>
+</form>
+<br/>
+<button id="btn_create">Create</button>
+<button id="btn_update" hidden="hidden">Update</button>
+<button id="btn_cancel" hidden="hidden">Cancel</button>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pet shop - tools</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+</head>
+<body>
+<script type="application/javascript">
+	var update_id;
+	function delline(id){
+        console.log("delete - " + id);
+        if (confirm('Are you sure?')){
+			$.ajax({url: 'api/tools/' + id,
+				    type: 'DELETE',
+			    	success: function(result) {
+			    		$("#" + id).remove();
+			    		alert('Tool ' + result.name + ' deleted.');
+			    	}
+			});
+        }
+	}
+	function updline(id){
+        console.log("update init - " + id);
+		$("#btn_create").hide();
+		$("#btn_update").show();
+		$("#btn_cancel").show();
+        $("#input_name").val($("#" + id + " .name").text());
+        $(".btn_x").attr("disabled", "disabled");
+        update_id = id;
+	}
+    $.getJSON("api/tools", function (data) {
+        console.log("get - " + data);
+        var trHTML = '';
+        $.each(data, function (index, value) {
+            trHTML += '<tr id="' + value.idTools + '"><td class="name">' + value.name + 
+            '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
+            '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td></tr>';
+        });
+
+        $('#tools_table').append(trHTML);
+    });
+    $(document).ready(function () {
+        $("#btn_cancel").click(function () {
+    		$("#btn_create").show();
+    		$("#btn_update").hide();
+    		$("#btn_cancel").hide();
+            $('#input_name').val('');
+            $(".btn_x").removeAttr("disabled");
+            update_id = 0;
+        });
+        $("#btn_create").click(function () {
+            var name = $('input[name="name"]').val();
+            var tools = {
+                name : name,
+            };
+            var data = JSON.stringify(tools);
+            console.log("add - " + data);
+            $.ajax({
+                type: "POST",
+                url: "api/tools",
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(value){
+                    var trHTML = '<tr id="' + value.idTools + '"><td class="name">' + value.name + 
+                    '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
+                    '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td></tr>';
+                    $('#tools_table').append(trHTML);
+                    $('#input_name').val('');
+                }
+            });
+        });
+        $("#btn_update").click(function () {
+            var name = $('input[name="name"]').val();
+            var idtools = update_id;
+            var tools = {
+            	idTools : idtools,
+                name : name,
+            };
+            var data = JSON.stringify(tools);
+            console.log("update - " + data);
+            $.ajax({
+                type: "PUT",
+                url: "api/tools",
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(value){
+                    var trHTML = '<td class="name">' + value.name + 
+                    '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
+                    '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td>';
+                    $('#' + update_id).html(trHTML);
+            		$("#btn_create").show();
+            		$("#btn_update").hide();
+            		$("#btn_cancel").hide();
+                    $(".btn_x").removeAttr("disabled");
+                    $('#input_name').val('');
+                    update_id = 0;
+                }
+            });
+        });
+    });
+</script>
+<table id="tools_table" border='1'>
+    <tr>
+        <th>Tool</th>
+        <th>Commands</th>
+    </tr>
+</table>
+
+<form id="create_form" action="api/tools" method="post">
+    <p>Tool Name:</p>
+    <input id="input_name" type="text" name="name"/>
+</form>
+<br/>
+<button id="btn_create">Create</button>
+<button id="btn_update" hidden="hidden">Update</button>
+<button id="btn_cancel" hidden="hidden">Cancel</button>
+</body>
+</html>
