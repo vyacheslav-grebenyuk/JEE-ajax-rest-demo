@@ -1,16 +1,32 @@
 package org.oa.ajax_rest_demo.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@Entity
+@Table(name="food")
 @XmlRootElement(name = "food")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Food {
 	@XmlElement
-	Integer idFood;
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(name="idfood")
+	private Integer idFood;
+	
 	@XmlElement
-	String name;
+	@Column(name="name")
+	private String name;
+	
 	@XmlElement
-	Float price;
+	@Column(name="price")
+	private Float price;
 	
 	public Food() {
 		idFood = null;

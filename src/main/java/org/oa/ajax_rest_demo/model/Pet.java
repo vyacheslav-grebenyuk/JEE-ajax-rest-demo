@@ -5,16 +5,48 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+
+@Entity
+@Table(name="pets")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @XmlRootElement(name = "pet")
 public class Pet {
 	
 	@XmlElement
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer idPets;
+	
 	@XmlElement
+	@Column(name="name")
 	private String name;
+	
 	@XmlElement
+	@Column(name="age")
 	private int age;
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@JoinTable(name="food_pet",
+			   joinColumns = {@JoinColumn(name = "id_pet") },
+			   inverseJoinColumns = { @JoinColumn(name = "id_food") })
 	private List<Food> foods;
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@JoinTable(name="tool_pet",
+			   joinColumns = {@JoinColumn(name = "id_pet") },
+			   inverseJoinColumns = { @JoinColumn(name = "id_tool") })
 	private List<Tools> tools;
 	
 	public Pet(String name, int age) {

@@ -1,14 +1,29 @@
 package org.oa.ajax_rest_demo.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@Entity
+@Table(name="tools")
 @XmlRootElement(name = "tool")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Tools {
+	
 	@XmlElement
-	Integer idTools;
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(name="idtools")
+	private Integer idTools;
+	
 	@XmlElement
-	String name;
+	@Column(name="name")
+	private String name;
 	
 	public Tools() {
 		idTools = null;

@@ -1,5 +1,6 @@
 package org.oa.ajax_rest_demo;
 
+import org.oa.ajax_rest_demo.dao.StorageRepositories;
 import org.oa.ajax_rest_demo.dao.StorageSession;
 import org.oa.ajax_rest_demo.model.Book;
 
@@ -17,6 +18,7 @@ public class BookService {
         StorageSession session = StorageSession.getInstance();
 
         List<Book> books = session.getBookDao().loadAll();
+    	
         return Response.ok(books,
                 MediaType.APPLICATION_JSON_TYPE).build();
     }

@@ -15,7 +15,7 @@
 				    type: 'DELETE',
 			    	success: function(result) {
 			    		$("#" + id).remove();
-			    		alert('Pet ' + result.name + ' deleted.');
+			    		alert('Food ' + result.name + ' deleted.');
 			    	}
 			});
         }
@@ -58,7 +58,7 @@
                 name : name,
                 price : price
             };
-            var data = JSON.stringify(pet);
+            var data = JSON.stringify(food);
             console.log("add - " + data);
             $.ajax({
                 type: "POST",
@@ -80,12 +80,12 @@
             var name = $('input[name="name"]').val();
             var price = $('input[name="price"]').val();
             var idfood = update_id;
-            var pet = {
+            var food = {
             	idFood : idfood,
                 name : name,
                 price : price
             };
-            var data = JSON.stringify(pet);
+            var data = JSON.stringify(food);
             console.log("update - " + data);
             $.ajax({
                 type: "PUT",
