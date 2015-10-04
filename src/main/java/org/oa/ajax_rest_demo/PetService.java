@@ -1,8 +1,8 @@
 package org.oa.ajax_rest_demo;
 
-import org.oa.ajax_rest_demo.dao.StorageRepositories;
-import org.oa.ajax_rest_demo.dao.StorageSession;
+import org.apache.log4j.Logger;
 import org.oa.ajax_rest_demo.model.Pet;
+import org.oa.ajax_rest_demo.repositories.StorageRepositories;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,15 +11,14 @@ import java.util.List;
 
 @Path("/pets")
 public class PetService {
+	private static final Logger log = Logger.getLogger(PetService.class);
 
     @GET
     @Produces("application/json")
     public Response getAll() {
-//        StorageSession session = StorageSession.getInstance();
-//
-//        List<Pet> pets = session.getPetDao().loadAll();
     	StorageRepositories session = StorageRepositories.getInstance();
     	List<Pet> pets = session.getPetRepository().findAll();
+    	log.info("list " + pets);
 
         return Response.ok(pets,
                 MediaType.APPLICATION_JSON_TYPE).build();
@@ -29,11 +28,9 @@ public class PetService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response add(Pet pet) {
-//        StorageSession session = StorageSession.getInstance();
-//
-//        Pet newPet = session.getPetDao().create(pet);
     	StorageRepositories session = StorageRepositories.getInstance();
     	Pet newPet = session.getPetRepository().create(pet);
+    	log.info("add " + newPet);
    	
     	return Response.ok(newPet,
                 MediaType.APPLICATION_JSON_TYPE).build();
@@ -44,11 +41,9 @@ public class PetService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response update(Pet pet) {
-//        StorageSession session = StorageSession.getInstance();
-//
-//        Pet newPet = session.getPetDao().update(pet);
     	StorageRepositories session = StorageRepositories.getInstance();
     	Pet newPet = session.getPetRepository().update(pet);
+    	log.info("update " + newPet);
     	
         return Response.ok(newPet,
                 MediaType.APPLICATION_JSON_TYPE).build();
@@ -58,13 +53,10 @@ public class PetService {
     @Produces("application/json")
     @Path("{id}")
     public Response delete(@PathParam("id") long id) {
-//        StorageSession session = StorageSession.getInstance();
-//
-//        Pet pet = session.getPetDao().findById(id);
-//        session.getPetDao().delete(pet);
     	StorageRepositories session = StorageRepositories.getInstance();
     	Pet pet = session.getPetRepository().findById(id);
     	session.getPetRepository().delete(pet);
+    	log.info("delete " + pet);
 
         return Response.ok(pet,
                 MediaType.APPLICATION_JSON_TYPE).build();

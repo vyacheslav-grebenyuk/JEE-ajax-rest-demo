@@ -1,22 +1,21 @@
-package org.oa.ajax_rest_demo.dao;
+package org.oa.ajax_rest_demo.repositories;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.oa.ajax_rest_demo.model.Food;
 import org.oa.ajax_rest_demo.model.Pet;
 
 import java.util.List;
 
-public class FoodRepository {
+public class PetRepository {
 
     private final SessionFactory sessionFactory;
 
-    public FoodRepository(SessionFactory sessionFactory) {
+    public PetRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    public Food create(Food item){
+    public Pet create(Pet item){
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         session.save(item);
@@ -24,7 +23,7 @@ public class FoodRepository {
         return item;
     }
 
-    public Food update(Food item){
+    public Pet update(Pet item){
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         session.update(item);
@@ -32,27 +31,27 @@ public class FoodRepository {
         return item;
     }
 
-    public void delete(Food item){
+    public void delete(Pet item){
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         session.delete(item);
         session.getTransaction().commit();
     }
 
-    public List<Food> findAll(){
+    public List<Pet> findAll(){
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
-        List<Food> result = session.createQuery("from Food").list();
+        List<Pet> result = session.createQuery("from Pet").list();
         session.getTransaction().commit();
         return result;
     }
 
-	public Food findById(long id) {
+	public Pet findById(long id) {
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
-        Query query = session.createQuery("from Food where idfood = :id ");
+        Query query = session.createQuery("from Pet where idpets = :id ");
         query.setParameter("id", id);
-        Food result = (Food) query.iterate().next();
+        Pet result = (Pet) query.iterate().next();
         session.getTransaction().commit();
         return result;
 	}

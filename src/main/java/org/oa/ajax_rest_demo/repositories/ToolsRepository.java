@@ -1,4 +1,4 @@
-package org.oa.ajax_rest_demo.dao;
+package org.oa.ajax_rest_demo.repositories;
 
 import org.hibernate.Query;
 import org.hibernate.Session;

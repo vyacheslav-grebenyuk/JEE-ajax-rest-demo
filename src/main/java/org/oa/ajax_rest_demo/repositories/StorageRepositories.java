@@ -1,11 +1,10 @@
-package org.oa.ajax_rest_demo.dao;
+package org.oa.ajax_rest_demo.repositories;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class StorageRepositories {
 
-    private BookRepository bookRepository;
     private PetRepository petRepository;
     private FoodRepository foodRepository;
     private ToolsRepository toolsRepository;
@@ -31,15 +30,11 @@ public class StorageRepositories {
             throw new ExceptionInInitializerError(ex);
         }
 
-        this.bookRepository = new BookRepository(sessionFactory);
         this.petRepository = new PetRepository(sessionFactory);
         this.foodRepository = new FoodRepository(sessionFactory);
         this.toolsRepository = new ToolsRepository(sessionFactory);        
     }
 
-    public BookRepository getBookRepository() {
-        return bookRepository;
-    }
     public PetRepository getPetRepository() {
         return petRepository;
     }
