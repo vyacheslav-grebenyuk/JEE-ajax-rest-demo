@@ -13,7 +13,32 @@ import java.util.List;
 public class PetService {
 	private static final Logger log = Logger.getLogger(PetService.class);
 
-    @GET
+	@GET
+	@Path("{start}/{end}")
+	@Produces("application/json")
+	public Response getAtAgeRange(@PathParam("start") int start,
+								  @PathParam("end") int end) {
+		StorageRepositories session = StorageRepositories.getInstance();
+		List<Pet> pets = session.getPetRepository().findAtAgeRange(start, end);
+		log.info("list by name" + pets);
+		
+		return Response.ok(pets,
+				MediaType.APPLICATION_JSON_TYPE).build();
+	}
+	
+	@GET
+	@Path("{name}")
+	@Produces("application/json")
+	public Response getByName(@PathParam("name") String name) {
+		StorageRepositories session = StorageRepositories.getInstance();
+		List<Pet> pets = session.getPetRepository().findByName(name);
+		log.info("list by name" + pets);
+		
+		return Response.ok(pets,
+				MediaType.APPLICATION_JSON_TYPE).build();
+	}
+	
+	@GET
     @Produces("application/json")
     public Response getAll() {
     	StorageRepositories session = StorageRepositories.getInstance();

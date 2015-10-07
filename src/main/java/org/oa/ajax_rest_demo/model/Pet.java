@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,16 +39,18 @@ public class Pet {
 	@Column(name="age")
 	private int age;
 	
-	@ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name="food_pet",
 			   joinColumns = {@JoinColumn(name = "id_pet") },
 			   inverseJoinColumns = { @JoinColumn(name = "id_food") })
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Food> foods;
 	
-	@ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name="tool_pet",
 			   joinColumns = {@JoinColumn(name = "id_pet") },
 			   inverseJoinColumns = { @JoinColumn(name = "id_tool") })
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Tools> tools;
 	
 	public Pet(String name, int age) {
