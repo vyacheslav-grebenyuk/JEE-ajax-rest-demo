@@ -26,6 +26,8 @@
 		$("#btn_update").show();
 		$("#btn_cancel").show();
         $("#input_name").val($("#" + id + " .name").text());
+        $("#input_price").val($("#" + id + " .price").text());
+        $("#input_quantity").val($("#" + id + " .quantity").text());
         $(".btn_x").attr("disabled", "disabled");
         update_id = id;
 	}
@@ -33,7 +35,7 @@
         console.log("get - " + data);
         var trHTML = '';
         $.each(data, function (index, value) {
-            trHTML += '<tr id="' + value.idTools + '"><td class="name">' + value.name + 
+            trHTML += '<tr id="' + value.idTools + '"><td class="name">' + value.name + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity + 
             '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
             '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td></tr>';
         });
@@ -46,13 +48,19 @@
     		$("#btn_update").hide();
     		$("#btn_cancel").hide();
             $('#input_name').val('');
+            $('#input_price').val('');
+            $('#input_quantity').val('');
             $(".btn_x").removeAttr("disabled");
             update_id = 0;
         });
         $("#btn_create").click(function () {
             var name = $('input[name="name"]').val();
+            var price = $('input[name="price"]').val();
+            var quantity = $('input[name="quantity"]').val();
             var tools = {
                 name : name,
+                price: price,
+                quantity: quantity
             };
             var data = JSON.stringify(tools);
             console.log("add - " + data);
@@ -63,21 +71,27 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(value){
-                    var trHTML = '<tr id="' + value.idTools + '"><td class="name">' + value.name + 
+                    var trHTML = '<tr id="' + value.idTools + '"><td class="name">' + value.name + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity + 
                     '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
                     '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td></tr>';
                     $('#tools_table').append(trHTML);
                     $('#input_name').val('');
+                    $('#input_price').val('');
+                    $('#input_quantity').val('');
                 }
             });
         });
         $("#btn_update").click(function () {
             var name = $('input[name="name"]').val();
-            var idtools = update_id;
+            var price = $('input[name="price"]').val();
+            var quantity = $('input[name="quantity"]').val();
+            var idtools = update_id;            
             var tools = {
-            	idTools : idtools,
+            	id : idtools,
                 name : name,
-            };
+                price: price,
+                quantity: quantity
+			};
             var data = JSON.stringify(tools);
             console.log("update - " + data);
             $.ajax({
@@ -87,7 +101,7 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(value){
-                    var trHTML = '<td class="name">' + value.name + 
+                    var trHTML = '<td class="name">' + value.name +  '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
                     '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
                     '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td>';
                     $('#' + update_id).html(trHTML);
@@ -96,6 +110,8 @@
             		$("#btn_cancel").hide();
                     $(".btn_x").removeAttr("disabled");
                     $('#input_name').val('');
+                    $('#input_price').val('');
+                    $('#input_quantity').val('');
                     update_id = 0;
                 }
             });
@@ -105,13 +121,19 @@
 <table id="tools_table" border='1'>
     <tr>
         <th>Tool</th>
+        <th>Price</th>
+        <th>Qnt.</th>
         <th>Commands</th>
     </tr>
 </table>
 
 <form id="create_form" action="api/tools" method="post">
-    <p>Tool Name:</p>
+    <p>Tool Name :</p>
     <input id="input_name" type="text" name="name"/>
+    <p>Tool Price:</p>
+    <input id="input_price" type="text" name="price"/>
+    <p>Tool Qnt. :</p>
+    <input id="input_quantity" type="text" name="quantity"/>
 </form>
 <br/>
 <button id="btn_create">Create</button>

@@ -2,9 +2,6 @@ package org.oa.ajax_rest_demo.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,35 +12,23 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Table(name="food")
 @XmlRootElement(name = "food")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Food {
+public class Food extends Goods{
 	@XmlElement
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Column(name="idfood")
-	private Integer idFood;
-	
-	@XmlElement
-	@Column(name="name")
+	@Column
 	private String name;
 	
 	@XmlElement
-	@Column(name="price")
-	private Float price;
+	@Column
+	private Float weight;
 	
 	public Food() {
-		idFood = null;
 		name = null;
-		price = null;
+		weight = null;
 	}
 	public Food(Integer idFood, String name, Float price) {
 		super();
-		this.idFood = idFood;
 		this.name = name;
-		this.price = price;
-	}
-	public Integer getIdFood() {
-		return idFood;
-	}
-	public void setIdFood(Integer id) {
-		this.idFood = id;
+		this.weight = price;
 	}
 	public String getName() {
 		return name;
@@ -51,19 +36,18 @@ public class Food {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Float getPrice() {
-		return price;
+	public Float getWeight() {
+		return weight;
 	}
-	public void setPrice(Float price) {
-		this.price = price;
+	public void setWeight(Float price) {
+		this.weight = price;
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((idFood == null) ? 0 : idFood.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((price == null) ? 0 : price.hashCode());
+		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
 		return result;
 	}
 	@Override
@@ -75,20 +59,15 @@ public class Food {
 		if (getClass() != obj.getClass())
 			return false;
 		Food other = (Food) obj;
-		if (idFood == null) {
-			if (other.idFood != null)
-				return false;
-		} else if (!idFood.equals(other.idFood))
-			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (price == null) {
-			if (other.price != null)
+		if (weight == null) {
+			if (other.weight != null)
 				return false;
-		} else if (!price.equals(other.price))
+		} else if (!weight.equals(other.weight))
 			return false;
 		return true;
 	}	

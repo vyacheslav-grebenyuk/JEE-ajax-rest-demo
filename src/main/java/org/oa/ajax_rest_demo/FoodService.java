@@ -2,7 +2,6 @@ package org.oa.ajax_rest_demo;
 
 import org.apache.log4j.Logger;
 import org.oa.ajax_rest_demo.model.Food;
-import org.oa.ajax_rest_demo.model.Pet;
 import org.oa.ajax_rest_demo.repositories.StorageRepositories;
 
 import javax.ws.rs.*;

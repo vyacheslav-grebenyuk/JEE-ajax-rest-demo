@@ -20,7 +20,7 @@ public class PetService {
 								  @PathParam("end") int end) {
 		StorageRepositories session = StorageRepositories.getInstance();
 		List<Pet> pets = session.getPetRepository().findAtAgeRange(start, end);
-		log.info("list by name" + pets);
+		log.info("list by age range" + pets);
 		
 		return Response.ok(pets,
 				MediaType.APPLICATION_JSON_TYPE).build();

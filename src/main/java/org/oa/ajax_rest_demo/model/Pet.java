@@ -12,10 +12,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -25,18 +21,14 @@ import javax.persistence.JoinColumn;
 @Table(name="pets")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @XmlRootElement(name = "pet")
-public class Pet {
+public class Pet extends Goods{
 	
 	@XmlElement
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer idPets;
-	
-	@XmlElement
-	@Column(name="name")
+	@Column
 	private String name;
 	
 	@XmlElement
-	@Column(name="age")
+	@Column
 	private int age;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -54,14 +46,12 @@ public class Pet {
 	private List<Tools> tools;
 	
 	public Pet(String name, int age) {
-		idPets = null;
 		this.name = name;
 		this.age = age;
 		foods = null;
 		tools = null;
 	}
 	public Pet() {
-		idPets = null;
 		name = null;
 		age = 0;
 		foods = null;
@@ -73,12 +63,6 @@ public class Pet {
 	}
 	public void setTools(List<Tools> tools) {
 		this.tools = tools;
-	}
-	public Integer getIdPets() {
-		return idPets;
-	}
-	public void setIdPets(Integer id) {
-		this.idPets = id;
 	}
 	public String getName() {
 		return name;
@@ -104,7 +88,6 @@ public class Pet {
 		int result = 1;
 		result = prime * result + age;
 		result = prime * result + ((foods == null) ? 0 : foods.hashCode());
-		result = prime * result + ((idPets == null) ? 0 : idPets.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((tools == null) ? 0 : tools.hashCode());
 		return result;
@@ -125,11 +108,6 @@ public class Pet {
 				return false;
 		} else if (!foods.equals(other.foods))
 			return false;
-		if (idPets == null) {
-			if (other.idPets != null)
-				return false;
-		} else if (!idPets.equals(other.idPets))
-			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -142,5 +120,4 @@ public class Pet {
 			return false;
 		return true;
 	}
-	
 }

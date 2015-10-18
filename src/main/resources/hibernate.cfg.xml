@@ -10,9 +10,14 @@
         <property name="connection.password">0okm9ijn8uhb</property>
         <!-- DB schema will be updated if needed -->
         <property name="hbm2ddl.auto">update</property>
+        <!-- <property name="hbm2ddl.auto">create-drop</property>  -->
         <property name="current_session_context_class">thread</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="show_sql">true</property>     
+        
         <mapping class="org.oa.ajax_rest_demo.model.Pet" />
         <mapping class="org.oa.ajax_rest_demo.model.Tools" />
         <mapping class="org.oa.ajax_rest_demo.model.Food" />
+        <mapping class="org.oa.ajax_rest_demo.model.Goods" />
     </session-factory>
 </hibernate-configuration>
