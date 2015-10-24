@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Pet shop</title>
-    <script src="js/jquery-2.1.4.min.js"></script>
+<meta charset="UTF-8">
+<title>Pet shop - pet</title>
+<script src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/jstorage.js"></script>
 </head>
 <body>
-<script type="application/javascript">
-	var update_id;
-	function delline(id){
-        console.log("delete - " + id);
-        if (confirm('Are you sure?')){
-			$.ajax({url: 'api/pets/' + id,
-				    type: 'DELETE',
-			    	success: function(result) {
-			    		$("#" + id).remove();
-			    		alert('Pet ' + result.name + ' deleted.');
-			    	}
-			});
+	<script type="application/javascript">		
+	function addGood(id){		
+		var name = $("#name"+id).text();
+        var age = $('#age'+id).text();
+        var price = $('#price'+id).text();
+        var quantity = $('#quantity'+id).text();        
+        var add = $('input[name="add_num_' + id + '"]').val();
+		var description = "Name: " + name + ", Age: " + age + ", Price: " + price;
+        if (add > quantity) {
+        	alert("Too much!");
+        } else {
+			$('input[name="add_num_' + id + '"]').val("");
+        	var purchase = {
+        		id : id,
+            	description : description,
+            	quantity: add
+        	};
+			$.jStorage.set(id,purchase);
+			if (sessionStorage.pnum) {
+			    sessionStorage.pnum = Number(sessionStorage.pnum) + 1;
+			} else {
+			    sessionStorage.pnum = 1;
+			}
+			$("#pnum").text(sessionStorage.pnum);
         }
-	}
-	function updline(id){
-        console.log("update init - " + id);
-		$("#btn_create").hide();
-		$("#btn_update").show();
-		$("#btn_cancel").show();
-        $("#input_name").val($("#" + id + " .name").text());
-        $("#input_age").val($("#" + id + " .age").text());
-        $("#input_price").val($("#" + id + " .price").text());
-        $("#input_quantity").val($("#" + id + " .quantity").text());
-        $(".btn_x").attr("disabled", "disabled");
-        update_id = id;
-	}
+	}	
     $.getJSON("api/pets", function (data) {
         console.log("get - " + data);
         var trHTML = '';
         $.each(data, function (index, value) {
-            trHTML += '<tr id="' + value.idPets + '"><td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-            '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-            '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td></tr>';
+            trHTML += '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="age' + value.id + '">' + value.age + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
+            '</td><td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '"/>' +
+            '<button class="btn_add" onclick="addGood(' + value.id + ')">Add to basket</button></td></tr>';
         });
 
         $('#pets_table').append(trHTML);
     });
     $(document).ready(function () {
+    	$("#pnum").text(sessionStorage.pnum);
         $("#btn_cancel").click(function () {
     		$("#btn_create").show();
     		$("#btn_update").hide();
@@ -59,11 +62,11 @@
             var name = $('input[name="filter_name"]').val();
             console.log("filter - " + name);
             $.getJSON("api/pets/"+name, function(result) {
-		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Commands</th></tr>';
+		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Price</th><th>Avail.Qnt.</th><th>Wish</th></tr>';
 		            $.each(result, function (ind, value) {
-		                trHTML += '<tr id="' + value.idPets + '"><td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-		                '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-		                '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td></tr>';
+		                trHTML += '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="age' + value.id + '">' + value.age + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
+		                '</td><td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '"/>' +
+		                '<button class="btn_add" onclick="addGood(' + value.id + ')">Add to basket</button></td></tr>';
 		            });
 
 		            $('#pets_table').html(trHTML);
@@ -76,11 +79,11 @@
             var end = $('input[name="filter_end"]').val();
             console.log("filter by age - " + name);
             $.getJSON("api/pets/"+start+"/"+end, function(result) {
-		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Price</th><th>Qnt.</th><th>Commands</th></tr>';
+		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Price</th><th>Avail.Qnt.</th><th>Wish</th></tr>';
 		            $.each(result, function (ind, value) {
-		                trHTML += '<tr id="' + value.idPets + '"><td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-		                '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-		                '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td></tr>';
+		                trHTML += '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="age' + value.id + '">' + value.age + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
+		                '</td><td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '"/>' +
+		                '<button class="btn_add" onclick="addGood(' + value.id + ')">Add to basket</button></td></tr>';
 		            });
 
 		            $('#pets_table').html(trHTML);
@@ -91,11 +94,11 @@
         $("#btn_discard_filter_by_name").click(function () {
             console.log("discard filter by name");
             $.getJSON("api/pets", function(result) {
-		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Commands</th></tr>';
+		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Price</th><th>Avail.Qnt.</th><th>Wish</th></tr>';
 		            $.each(result, function (ind, value) {
-		                trHTML += '<tr id="' + value.idPets + '"><td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-		                '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-		                '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td></tr>';
+		                trHTML += '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="age' + value.id + '">' + value.age + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
+		                '</td><td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '"/>' +
+		                '<button class="btn_add" onclick="addGood(' + value.id + ')">Add to basket</button></td></tr>';
 		            });
 
 		            $('#pets_table').html(trHTML);
@@ -107,11 +110,11 @@
         $("#btn_discard_filter_by_age").click(function () {
             console.log("discard filter by age");
             $.getJSON("api/pets", function(result) {
-		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Commands</th></tr>';
+		            var trHTML = '<tr><th>Pet</th><th>Age</th><th>Price</th><th>Avail.Qnt.</th><th>Wish</th></tr>';
 		            $.each(result, function (ind, value) {
-		                trHTML += '<tr id="' + value.idPets + '"><td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-		                '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-		                '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td></tr>';
+		                trHTML += '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="age' + value.id + '">' + value.age + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
+		                '</td><td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '"/>' +
+		                '<button class="btn_add" onclick="addGood(' + value.id + ')">Add to basket</button></td></tr>';
 		            });
 
 		            $('#pets_table').html(trHTML);
@@ -120,116 +123,33 @@
             $('#filter_start').val('');
             $('#filter_end').val('');
     		$("#btn_discard_filter_by_age").hide();
-        });
-        $("#btn_create").click(function () {
-            var name = $('input[name="name"]').val();
-            var age = $('input[name="age"]').val();
-            var price = $('input[name="price"]').val();
-            var quantity = $('input[name="quantity"]').val();
-            var pet = {
-                name : name,
-                age : age,
-                price: price,
-                quantity: quantity
-            };
-            var data = JSON.stringify(pet);
-            console.log("add - " + data);
-            $.ajax({
-                type: "POST",
-                url: "api/pets",
-                data: data,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(value){
-                    var trHTML = '<tr id="' + value.idPets + '"><td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-                    '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-                    '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td></tr>';
-                    $('#pets_table').append(trHTML);
-                    $('#input_name').val('');
-                    $('#input_age').val('');
-                    $('#input_price').val('');
-                    $('#input_quantity').val('');
-                }
-            });
-        });
-        $("#btn_update").click(function () {
-            var name = $('input[name="name"]').val();
-            var age = $('input[name="age"]').val();
-            var price = $('input[name="price"]').val();
-            var quantity = $('input[name="quantity"]').val();
-            var idpets = update_id;
-            var pet = {
-            	id : idpets,
-                name : name,
-                age : age,
-                price: price,
-                quantity: quantity
-            };
-            var data = JSON.stringify(pet);
-            console.log("update - " + data);
-            $.ajax({
-                type: "PUT",
-                url: "api/pets",
-                data: data,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(value){
-                    var trHTML = '<td class="name">' + value.name + '</td><td class="age">' + value.age + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-                    '</td><td><button class="btn_x" onclick="delline(' + value.idPets + ')">X</button>' +
-                    '<button class="btn_u" onclick="updline(' + value.idPets + ')">U</button></td>';
-                    $('#' + update_id).html(trHTML);
-            		$("#btn_create").show();
-            		$("#btn_update").hide();
-            		$("#btn_cancel").hide();
-                    $(".btn_x").removeAttr("disabled");
-                    $('#input_name').val('');
-                    $('#input_age').val('');
-                    $('#input_price').val('');
-                    $('#input_quantity').val('');
-                    update_id = 0;
-                }
-            });
-        });
-    });
-</script>
+        });       
+        
+    });	
+	</script>
 
-<p>
-Filter by Name: 
-<input id="filter_name" type="text" name="filter_name"/>        
-<button id="btn_filter_by_name">Filter</button>
-<button id="btn_discard_filter_by_name" hidden="hidden">Discard</button>
-</p>
-<p>
-Filter by Age Range: 
-<input id="filter_start" type="text" name="filter_start"/>        
-<input id="filter_end" type="text" name="filter_end"/>
-<button id="btn_filter_by_age">Filter</button>
-<button id="btn_discard_filter_by_age" hidden="hidden">Discard</button>
-</p>
+	<p>
+		Filter by Name: <input id="filter_name" type="text" name="filter_name" />
+		<button id="btn_filter_by_name">Filter</button>
+		<button id="btn_discard_filter_by_name" hidden="hidden">Discard</button>
+	</p>
+	<p>
+		Filter by Age Range: <input id="filter_start" type="text"
+			name="filter_start" /> <input id="filter_end" type="text"
+			name="filter_end" />
+		<button id="btn_filter_by_age">Filter</button>
+		<button id="btn_discard_filter_by_age" hidden="hidden">Discard</button>
+	</p>
 
-<table id="pets_table" border='1'>
-    <tr>
-        <th>Pet</th>
-        <th>Age</th>
-        <th>Price</th>
-        <th>Qnt.</th>
-        <th>Commands</th>
-    </tr>
-</table>
-
-<form id="create_form" action="api/pets" method="post">
-    <p>Pet's Name:</p>
-    <input id="input_name" type="text" name="name"/>
-    <p>Pet's Age :</p>
-    <input id="input_age" type="text" name="age"/>
-    <p>Pet's Price :</p>
-    <input id="input_price" type="text" name="price"/>
-    <p>Pet's Qnt.  :</p>
-    <input id="input_quantity" type="text" name="quantity"/>
-</form>
-<br/>
-<button id="btn_create">Create</button>
-<button id="btn_update" hidden="hidden">Update</button>
-<button id="btn_cancel" hidden="hidden">Cancel</button>
+	<table id="pets_table" border='1'>
+		<tr>
+			<th>Pet</th>
+			<th>Age</th>
+			<th>Price</th>
+			<th>Avail.Qnt.</th>
+			<th>Wish</th>
+		</tr>
+	</table>
+	<a href="basket.html">Basket: (<span id="pnum">0</span>) item(s)</a>
 </body>
 </html>

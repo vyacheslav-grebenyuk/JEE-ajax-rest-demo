@@ -62,7 +62,7 @@ public class PetRepository {
         Session session = sessionFactory.getCurrentSession();
         session.beginTransaction();
         Query query = session.createSQLQuery(
-        		"select * from pets where name like :name")
+        		"select * from pets, goods where pets.id = goods.id and name like :name")
         		.addEntity(Pet.class)
         		.setString("name", "%" + name + "%");
         List<Pet> result = (List<Pet>) query.list();

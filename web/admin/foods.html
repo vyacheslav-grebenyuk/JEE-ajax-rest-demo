@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pet shop - tools</title>
-    <script src="js/jquery-2.1.4.min.js"></script>
+    <title>Pet shop</title>
+    <script src="../js/jquery-2.1.4.min.js"></script>
 </head>
 <body>
 <script type="application/javascript">
@@ -11,11 +11,11 @@
 	function delline(id){
         console.log("delete - " + id);
         if (confirm('Are you sure?')){
-			$.ajax({url: 'api/tools/' + id,
+			$.ajax({url: '../api/foods/' + id,
 				    type: 'DELETE',
 			    	success: function(result) {
 			    		$("#" + id).remove();
-			    		alert('Tool ' + result.name + ' deleted.');
+			    		alert('Food ' + result.name + ' deleted.');
 			    	}
 			});
         }
@@ -26,21 +26,22 @@
 		$("#btn_update").show();
 		$("#btn_cancel").show();
         $("#input_name").val($("#" + id + " .name").text());
+        $("#input_weight").val($("#" + id + " .weight").text());
         $("#input_price").val($("#" + id + " .price").text());
         $("#input_quantity").val($("#" + id + " .quantity").text());
         $(".btn_x").attr("disabled", "disabled");
         update_id = id;
 	}
-    $.getJSON("api/tools", function (data) {
+    $.getJSON("../api/foods", function (data) {
         console.log("get - " + data);
         var trHTML = '';
         $.each(data, function (index, value) {
-            trHTML += '<tr id="' + value.idTools + '"><td class="name">' + value.name + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity + 
-            '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
-            '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td></tr>';
+            trHTML += '<tr id="' + value.idFood + '"><td class="name">' + value.name + '</td><td class="weight">' + value.weight + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
+            '</td><td><button class="btn_x" onclick="delline(' + value.idFood + ')">X</button>' +
+            '<button class="btn_u" onclick="updline(' + value.idFood + ')">U</button></td></tr>';
         });
 
-        $('#tools_table').append(trHTML);
+        $('#foods_table').append(trHTML);
     });
     $(document).ready(function () {
         $("#btn_cancel").click(function () {
@@ -48,6 +49,7 @@
     		$("#btn_update").hide();
     		$("#btn_cancel").hide();
             $('#input_name').val('');
+            $('#input_weight').val('');
             $('#input_price').val('');
             $('#input_quantity').val('');
             $(".btn_x").removeAttr("disabled");
@@ -55,27 +57,30 @@
         });
         $("#btn_create").click(function () {
             var name = $('input[name="name"]').val();
+            var weight = $('input[name="weight"]').val();
             var price = $('input[name="price"]').val();
             var quantity = $('input[name="quantity"]').val();
-            var tools = {
+            var food = {
                 name : name,
+                weight : weight,
                 price: price,
                 quantity: quantity
             };
-            var data = JSON.stringify(tools);
+            var data = JSON.stringify(food);
             console.log("add - " + data);
             $.ajax({
                 type: "POST",
-                url: "api/tools",
+                url: "../api/foods",
                 data: data,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(value){
-                    var trHTML = '<tr id="' + value.idTools + '"><td class="name">' + value.name + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity + 
-                    '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
-                    '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td></tr>';
-                    $('#tools_table').append(trHTML);
+                    var trHTML = '<tr id="' + value.idFood + '"><td class="name">' + value.name + '</td><td class="weight">' + value.weight + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
+                    '</td><td><button class="btn_x" onclick="delline(' + value.idFood + ')">X</button>' +
+                    '<button class="btn_u" onclick="updline(' + value.idFood + ')">U</button></td></tr>';
+                    $('#foods_table').append(trHTML);
                     $('#input_name').val('');
+                    $('#input_weight').val('');
                     $('#input_price').val('');
                     $('#input_quantity').val('');
                 }
@@ -83,33 +88,36 @@
         });
         $("#btn_update").click(function () {
             var name = $('input[name="name"]').val();
+            var weight = $('input[name="weight"]').val();
             var price = $('input[name="price"]').val();
             var quantity = $('input[name="quantity"]').val();
-            var idtools = update_id;            
-            var tools = {
-            	id : idtools,
+            var idfood = update_id;
+            var food = {
+            	id : idfood,
                 name : name,
+                weight : weight,
                 price: price,
                 quantity: quantity
-			};
-            var data = JSON.stringify(tools);
+            };
+            var data = JSON.stringify(food);
             console.log("update - " + data);
             $.ajax({
                 type: "PUT",
-                url: "api/tools",
+                url: "../api/foods",
                 data: data,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(value){
-                    var trHTML = '<td class="name">' + value.name +  '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
-                    '</td><td><button class="btn_x" onclick="delline(' + value.idTools + ')">X</button>' +
-                    '<button class="btn_u" onclick="updline(' + value.idTools + ')">U</button></td>';
+                    var trHTML = '<td class="name">' + value.name + '</td><td class="weight">' + value.weight + '</td><td class="price">' + value.price + '</td><td class="quantity">' + value.quantity +
+                    '</td><td><button class="btn_x" onclick="delline(' + value.idFood + ')">X</button>' +
+                    '<button class="btn_u" onclick="updline(' + value.idFood + ')">U</button></td>';
                     $('#' + update_id).html(trHTML);
             		$("#btn_create").show();
             		$("#btn_update").hide();
             		$("#btn_cancel").hide();
                     $(".btn_x").removeAttr("disabled");
                     $('#input_name').val('');
+                    $('#input_weight').val('');
                     $('#input_price').val('');
                     $('#input_quantity').val('');
                     update_id = 0;
@@ -118,22 +126,25 @@
         });
     });
 </script>
-<table id="tools_table" border='1'>
+<table id="foods_table" border='1'>
     <tr>
-        <th>Tool</th>
+        <th>Food</th>
+        <th>Weight</th>
         <th>Price</th>
         <th>Qnt.</th>
         <th>Commands</th>
     </tr>
 </table>
 
-<form id="create_form" action="api/tools" method="post">
-    <p>Tool Name :</p>
+<form id="create_form" action="../api/foods" method="post">
+    <p>Food Name  :</p>
     <input id="input_name" type="text" name="name"/>
-    <p>Tool Price:</p>
+    <p>Food Weight:</p>
+    <input id="input_weight" type="text" name="weight"/>
+    <p>Food Price :</p>
     <input id="input_price" type="text" name="price"/>
-    <p>Tool Qnt. :</p>
-    <input id="input_quantity" type="text" name="quantity"/>
+    <p>Food Qnt.  :</p>
+    <input id="input_quantity" type="text" name="quantity"/>    
 </form>
 <br/>
 <button id="btn_create">Create</button>
