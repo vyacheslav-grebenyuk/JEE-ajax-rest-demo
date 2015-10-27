@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pet shop - pet</title>
+<script src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/jstorage.js"></script>
+</head>
+<body>
+	<script type="application/javascript">
+	function tableHeadHTML(){
+		return '<tr><th>Purchase descr.</th><th>Wish</th></tr>'; 
+	}
+	function tableLineHTML(value){
+		return '<tr id="' + value.id + '"><td id="description' + value.id + '">' + value.description + '</td>' +
+	     	   '<td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '" value="' + value.quantity + '"/>' +
+    	       '<button class="btn_add" onclick="addGood(' + value.id + ')">Update in basket</button></td></tr>';
+	}
+	function addGood(id){		
+        var description = $('#description'+id).text();
+        var add = $('input[name="add_num_' + id + '"]').val();
+        if (add > -1) {
+        	alert("Too less!");
+        } else {
+			$('input[name="add_num_' + id + '"]').val("");
+			if (add == 0){
+				$.jStorage.deleteKey(id);
+				if(sessionStorage.pnum > 0)
+					sessionStorage.pnum = Number(sessionStorage.pnum) - 1;
+			} else {
+        		var purchase = {
+        			id : id,
+            		description : description,
+            		quantity: add
+        		};
+        		if( $.jStorage.get(id) == null)
+        			if (sessionStorage.pnum) {
+			    		sessionStorage.pnum = Number(sessionStorage.pnum) + 1;
+					} else {					
+			    		sessionStorage.pnum = 1;
+					}        		
+        		$.jStorage.set(id,purchase);
+			}
+			$("#pnum").text(sessionStorage.pnum);
+        }
+	}	
+    $(document).ready(function () {
+    	if (!sessionStorage.pnum) sessionStorage.pnum = $.jStorage.index().length;
+    	$("#pnum").text(sessionStorage.pnum);
+        var trHTML = tableHeadHTML();
+        $.each($.jStorage.index(), function (ind, value) {
+            trHTML += tableLineHTML($.jStorage.get(value));
+        });
+
+        $('#purchases_table').html(trHTML);        
+    });	
+	</script>
+
+	<table id="purchases_table" border='1'>
+		<tr>
+			<th>Purchase descr.</th>
+			<th>Wish</th>
+		</tr>
+	</table>
+	<a href="basket.html">Basket: (<span id="pnum">0</span>) item(s)</a>
+</body>
+</html>

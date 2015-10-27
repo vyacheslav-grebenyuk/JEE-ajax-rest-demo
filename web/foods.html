@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Pet shop - pet</title>
+<title>Pet shop - food</title>
 <script src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/jstorage.js"></script>
@@ -10,20 +10,20 @@
 <body>
 	<script type="application/javascript">
 	function tableHeadHTML(){
-		return '<tr><th>Pet</th><th>Age</th><th>Price</th><th>Avail.Qnt.</th><th>Wish</th></tr>'; 
+		return '<tr><th>Food</th><th>Weight</th><th>Price</th><th>Avail.Qnt.</th><th>Wish</th></tr>'; 
 	}
 	function tableLineHTML(value){
-		return '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="age' + value.id + '">' + value.age + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
+		return '<tr id="' + value.id + '"><td id="name' + value.id + '">' + value.name + '</td><td id="weight' + value.id + '">' + value.weight + '</td><td id="price' + value.id + '">' + value.price + '</td><td id="quantity' + value.id + '">' + value.quantity +
 	     	   '</td><td><input id="add_num_' + value.id + '" type="text" name="add_num_' + value.id + '"/>' +
     	       '<button class="btn_add" onclick="addGood(' + value.id + ')">Add to basket</button></td></tr>';
 	}
 	function addGood(id){		
 		var name = $("#name"+id).text();
-        var age = $('#age'+id).text();
+        var weight = $('#weight'+id).text();
         var price = $('#price'+id).text();
         var quantity = $('#quantity'+id).text();        
         var add = $('input[name="add_num_' + id + '"]').val();
-		var description = "Name: " + name + ", Age: " + age + ", Price: " + price;
+		var description = "Name: " + name + ", Weight: " + weight + ", Price: " + price;
         if (add > quantity) {
         	alert("Too much!");
         } else {
@@ -49,14 +49,14 @@
 			$("#pnum").text(sessionStorage.pnum);
         }
 	}	
-    $.getJSON("api/pets", function (data) {
+    $.getJSON("api/foods", function (data) {
         console.log("get - " + data);
         var trHTML = '';
         $.each(data, function (index, value) {
             trHTML += tableLineHTML(value);
         });
 
-        $('#pets_table').append(trHTML);
+        $('#foods_table').append(trHTML);
     });
     $(document).ready(function () {
     	if (!sessionStorage.pnum) sessionStorage.pnum = $.jStorage.index().length;
@@ -66,7 +66,7 @@
     		$("#btn_update").hide();
     		$("#btn_cancel").hide();
             $('#input_name').val('');
-            $('#input_age').val('');
+            $('#input_weight').val('');
             $('#input_price').val('');
             $('#input_quantity').val('');
             $(".btn_x").removeAttr("disabled");
@@ -75,60 +75,60 @@
         $("#btn_filter_by_name").click(function () {
             var name = $('input[name="filter_name"]').val();
             console.log("filter - " + name);
-            $.getJSON("api/pets/"+name, function(result) {
+            $.getJSON("api/foods/"+name, function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
 		            });
 
-		            $('#pets_table').html(trHTML);
+		            $('#foods_table').html(trHTML);
 		    	}
 			);
     		$("#btn_discard_filter_by_name").show();
         });
-        $("#btn_filter_by_age").click(function () {
+        $("#btn_filter_by_weight").click(function () {
             var start = $('input[name="filter_start"]').val();
             var end = $('input[name="filter_end"]').val();
-            console.log("filter by age - " + name);
-            $.getJSON("api/pets/"+start+"/"+end, function(result) {
+            console.log("filter by weight - " + name);
+            $.getJSON("api/foods/"+start+"/"+end, function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
 		            });
 
-		            $('#pets_table').html(trHTML);
+		            $('#foods_table').html(trHTML);
 		    	}
 			);
-    		$("#btn_discard_filter_by_age").show();
+    		$("#btn_discard_filter_by_weight").show();
         });
         $("#btn_discard_filter_by_name").click(function () {
             console.log("discard filter by name");
-            $.getJSON("api/pets", function(result) {
+            $.getJSON("api/foods", function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
 		            });
 
-		            $('#pets_table').html(trHTML);
+		            $('#foods_table').html(trHTML);
 		    	}
 			);
             $('#filter_name').val('');
     		$("#btn_discard_filter_by_name").hide();
         });
-        $("#btn_discard_filter_by_age").click(function () {
-            console.log("discard filter by age");
-            $.getJSON("api/pets", function(result) {
+        $("#btn_discard_filter_by_weight").click(function () {
+            console.log("discard filter by weight");
+            $.getJSON("api/foods", function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
 		            });
 
-		            $('#pets_table').html(trHTML);
+		            $('#foods_table').html(trHTML);
 		    	}
 			);
             $('#filter_start').val('');
             $('#filter_end').val('');
-    		$("#btn_discard_filter_by_age").hide();
+    		$("#btn_discard_filter_by_weight").hide();
         });       
         
     });	
@@ -140,17 +140,17 @@
 		<button id="btn_discard_filter_by_name" hidden="hidden">Discard</button>
 	</p>
 	<p>
-		Filter by Age Range: <input id="filter_start" type="text"
+		Filter by Weight Range: <input id="filter_start" type="text"
 			name="filter_start" /> <input id="filter_end" type="text"
 			name="filter_end" />
-		<button id="btn_filter_by_age">Filter</button>
-		<button id="btn_discard_filter_by_age" hidden="hidden">Discard</button>
+		<button id="btn_filter_by_weight">Filter</button>
+		<button id="btn_discard_filter_by_weight" hidden="hidden">Discard</button>
 	</p>
 
-	<table id="pets_table" border='1'>
+	<table id="foods_table" border='1'>
 		<tr>
-			<th>Pet</th>
-			<th>Age</th>
+			<th>Food</th>
+			<th>Weight</th>
 			<th>Price</th>
 			<th>Avail.Qnt.</th>
 			<th>Wish</th>
