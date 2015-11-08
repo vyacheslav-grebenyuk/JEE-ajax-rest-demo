@@ -1,17 +1,16 @@
 package org.oa.ajax_rest_demo.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -21,41 +20,30 @@ import javax.persistence.JoinColumn;
 @Table(name="pets")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @XmlRootElement(name = "pet")
-public class Pet extends Goods{
-	
-	@XmlElement
-	@Column
-	private String name;
-	
+public class Pet extends Goods implements Serializable{
+	private static final long serialVersionUID = -8282881969216927365L;
+
 	@XmlElement
 	@Column
 	private int age;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="food_pet",
 			   joinColumns = {@JoinColumn(name = "id_pet") },
-			   inverseJoinColumns = { @JoinColumn(name = "id_food") })
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<Food> foods;
+			   inverseJoinColumns = { @JoinColumn(name = "id_food") })	
+	private List<Food> foods = new ArrayList<>();
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="tool_pet",
 			   joinColumns = {@JoinColumn(name = "id_pet") },
 			   inverseJoinColumns = { @JoinColumn(name = "id_tool") })
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<Tools> tools;
+	private List<Tools> tools = new ArrayList<>();
 	
-	public Pet(String name, int age) {
-		this.name = name;
+	public Pet(int age) {
 		this.age = age;
-		foods = null;
-		tools = null;
 	}
 	public Pet() {
-		name = null;
 		age = 0;
-		foods = null;
-		tools = null;
 	}
 	
 	public List<Tools> getTools() {
@@ -63,12 +51,6 @@ public class Pet extends Goods{
 	}
 	public void setTools(List<Tools> tools) {
 		this.tools = tools;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public int getAge() {
 		return age;
@@ -85,10 +67,9 @@ public class Pet extends Goods{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + age;
 		result = prime * result + ((foods == null) ? 0 : foods.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((tools == null) ? 0 : tools.hashCode());
 		return result;
 	}
@@ -96,7 +77,7 @@ public class Pet extends Goods{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -107,11 +88,6 @@ public class Pet extends Goods{
 			if (other.foods != null)
 				return false;
 		} else if (!foods.equals(other.foods))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
 			return false;
 		if (tools == null) {
 			if (other.tools != null)

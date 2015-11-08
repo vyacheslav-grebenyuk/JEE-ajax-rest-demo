@@ -1,9 +1,9 @@
 package org.oa.ajax_rest_demo.model;
 
-import javax.persistence.Column;
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -12,45 +12,27 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Table(name="tools")
 @XmlRootElement(name = "tool")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Tools extends Goods{
+public class Tools extends Goods implements Serializable{
 	
-	@XmlElement
-	@Column
-	private String name;
+	private static final long serialVersionUID = 2773029531127932619L;
 	
 	public Tools() {
-		name = null;
 	}
 	public Tools(Integer idTools, String name) {
 		super();
-		this.name = name;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		int result = super.hashCode();
 		return result;
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
-			return false;
-		Tools other = (Tools) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}

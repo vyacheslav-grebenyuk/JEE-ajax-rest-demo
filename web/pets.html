@@ -75,7 +75,7 @@
         $("#btn_filter_by_name").click(function () {
             var name = $('input[name="filter_name"]').val();
             console.log("filter - " + name);
-            $.getJSON("api/pets/"+name, function(result) {
+            $.getJSON("/api/pets/"+name, function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
@@ -90,7 +90,7 @@
             var start = $('input[name="filter_start"]').val();
             var end = $('input[name="filter_end"]').val();
             console.log("filter by age - " + name);
-            $.getJSON("api/pets/"+start+"/"+end, function(result) {
+            $.getJSON("/api/pets/"+start+"/"+end, function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
@@ -103,7 +103,7 @@
         });
         $("#btn_discard_filter_by_name").click(function () {
             console.log("discard filter by name");
-            $.getJSON("api/pets", function(result) {
+            $.getJSON("/api/pets", function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);
@@ -117,7 +117,7 @@
         });
         $("#btn_discard_filter_by_age").click(function () {
             console.log("discard filter by age");
-            $.getJSON("api/pets", function(result) {
+            $.getJSON("/api/pets", function(result) {
 		            var trHTML = tableHeadHTML();
 		            $.each(result, function (ind, value) {
 		                trHTML += tableLineHTML(value);

@@ -1,5 +1,7 @@
 package org.oa.ajax_rest_demo.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -12,29 +14,19 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Table(name="food")
 @XmlRootElement(name = "food")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Food extends Goods{
-	@XmlElement
-	@Column
-	private String name;
-	
+public class Food extends Goods implements Serializable{
+	private static final long serialVersionUID = -2396210443794675041L;
+
 	@XmlElement
 	@Column
 	private Float weight;
 	
 	public Food() {
-		name = null;
 		weight = null;
 	}
 	public Food(Integer idFood, String name, Float price) {
 		super();
-		this.name = name;
 		this.weight = price;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public Float getWeight() {
 		return weight;
@@ -45,8 +37,7 @@ public class Food extends Goods{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		int result = super.hashCode();
 		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
 		return result;
 	}
@@ -54,16 +45,11 @@ public class Food extends Goods{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Food other = (Food) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
 		if (weight == null) {
 			if (other.weight != null)
 				return false;

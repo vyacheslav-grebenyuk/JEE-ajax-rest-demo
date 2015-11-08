@@ -14,23 +14,29 @@ import javax.xml.bind.annotation.XmlElement;
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class Goods {
 	@XmlElement
-	@Id @GeneratedValue(strategy = GenerationType.AUTO) @SequenceGenerator(name = "goods_id")
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @SequenceGenerator(name = "goods_id")
 	private int id;
 	
 	@XmlElement
 	@Column
-	private double price;
+	private String name;
+
+	@XmlElement
+	@Column
+	private long price;
 	
 	@XmlElement
 	@Column
 	private int quantity;
 
 	public Goods() {
+		name = "";
 		price = 0;
 		quantity = 0;
 	}	
 	
-	public Goods(double price, int quantity) {
+	public Goods(String name, long price, int quantity) {
+		this.name = name;
 		this.price = price;
 		this.quantity = quantity;
 	}
@@ -42,12 +48,20 @@ public abstract class Goods {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 
-	public double getPrice() {
+	public long getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(long price) {
 		this.price = price;
 	}
 
@@ -58,4 +72,32 @@ public abstract class Goods {
 	public void setQuantity(int y) {
 		this.quantity = y;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + (int) (price ^ (price >>> 32));
+		result = prime * result + quantity;
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Goods other = (Goods) obj;
+		if (id != other.id)
+			return false;
+		if (price != other.price)
+			return false;
+		if (quantity != other.quantity)
+			return false;
+		return true;
+	}
 }
+

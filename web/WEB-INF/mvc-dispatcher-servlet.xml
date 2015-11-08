@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:component-scan base-package="org.oa.ajax_rest_demo.repositories"/>
+
+	<context:component-scan base-package="org.oa.ajax_rest_demo.services"/>
+
+    <context:component-scan base-package="org.oa.ajax_rest_demo.controllers"/>
+    
+    <context:component-scan base-package="org.oa.ajax_rest_demo.converters"/>
+	
+	<context:property-placeholder location="WEB-INF/jdbc.properties"/>
+
+<!-- 	
+	<mvc:annotation-driven />
+ -->    
+	<mvc:annotation-driven conversion-service="conversionService"/>
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+  		<property name="formatterRegistrars">
+    		<set>
+    			<ref bean="customFormatterRegistrar" />
+    		</set>
+  		</property>
+	</bean>
+	
+	<bean class="org.oa.ajax_rest_demo.converters.CustomFormatterRegistrar" id="customFormatterRegistrar" />
+	
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" id="handlerMapping">
+        <property name="alwaysUseFullPath" value="true" />
+    </bean>
+
+    <mvc:interceptors>
+		<bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+	</mvc:interceptors>
+    
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+    		<list>
+            	<value>org.oa.ajax_rest_demo.model.Pet</value>
+       			<value>org.oa.ajax_rest_demo.model.Tools</value>
+        		<value>org.oa.ajax_rest_demo.model.Food</value>
+        		<value>org.oa.ajax_rest_demo.model.Goods</value>
+     		</list>
+ 		</property>
+ 		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+			</props>
+		</property>
+ 	</bean>
+ 
+	<bean id="dataSource"
+		  class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+ 	<tx:annotation-driven transaction-manager="transactionManager" />
+ 	
+	<bean id="transactionManager"
+		  class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+ 
+</beans>

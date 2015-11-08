@@ -1,83 +1,93 @@
 package org.oa.ajax_rest_demo.repositories;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.oa.ajax_rest_demo.model.Pet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Component
+@Repository
+@Transactional(readOnly = true)
 public class PetRepository {
 
-    private final SessionFactory sessionFactory;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    public PetRepository(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     public Pet create(Pet item){
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         session.save(item);
-        session.getTransaction().commit();
         return item;
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     public Pet update(Pet item){
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         session.update(item);
-        session.getTransaction().commit();
         return item;
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     public void delete(Pet item){
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         session.delete(item);
-        session.getTransaction().commit();
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<Pet> findAll(){
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-        List<Pet> result = session.createQuery("from Pet").list();
-        session.getTransaction().commit();
+        @SuppressWarnings("unchecked")
+		List<Pet> result = session.createQuery("from Pet").list();
         return result;
     }
 
-	public Pet findById(long id) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Pet findById(int id) {
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-        Query query = session.createQuery("from Pet where idpets = :id")
+        Query query = session.createQuery("from Pet where id = :id")
         					.setParameter("id", id);
         Pet result = (Pet) query.iterate().next();
-        session.getTransaction().commit();
+        if(result!=null){
+            Hibernate.initialize(result.getFoods());
+            Hibernate.initialize(result.getTools());
+        }
         return result;
 	}
 	
-	public List<Pet> findByName(String name) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Pet> findByName(String name) {
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         Query query = session.createSQLQuery(
         		"select * from pets, goods where pets.id = goods.id and name like :name")
         		.addEntity(Pet.class)
         		.setString("name", "%" + name + "%");
-        List<Pet> result = (List<Pet>) query.list();
-        session.getTransaction().commit();
+        @SuppressWarnings("unchecked")
+		List<Pet> result = (List<Pet>) query.list();
         return result;
 	}
 	
-	public List<Pet> findAtAgeRange(int start, int end) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Pet> findAtPriceRange(long start, long end) {
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
         Criteria criteria = session.createCriteria(Pet.class)
-        		.add( Restrictions.between("age", start, end) );
+        		.add( Restrictions.between("price", start, end) );
 
-        List<Pet> result = (List<Pet>) criteria.list();
-        session.getTransaction().commit();
+        @SuppressWarnings("unchecked")
+		List<Pet> result = (List<Pet>) criteria.list();
         return result;
 	}
 }
