@@ -1,0 +1,58 @@
+Электронный магазин по продаже животных и сопутствующих товаров
+Проект выполненен Вячеславом Гребенюком, декабрь 2015
+
+Для создания базы данных необходимо исполнить скрипты createdb.sql
+Настройки БД находятся в web\WEB-INF\jdbc.properties
+По умолчанию:
+url=jdbc:mysql://localhost:3306/jeepetshop
+username=root
+password=0okm9ijn8uhb
+
+Использованы технологии Hibernate, Spring Beans, Spring MVC, Spring Security.
+
+Созданы сущности для абстрактного класса Goods и его наследников Pet, Food и Tools (пакет
+org.oa..ajax_rest_demo.model).
+Написаны все репозитории для этих сущностей и контролеры для диспетчера SpringMVC
+(пакеты repository и controllers). От предыдущей версии (из ветки Hibernate) остался пакте
+с рест-сервисами (service), который возможно работает не в полной мере после подключения
+Spring :(
+
+Для правильной конвертации объектов приходящих от фронт-енда при реализации отношений
+многие-ко-многим использованы конверторы наследующие: 
+org.springframework.core.convert.converter.Converter
+все эти конверторы зарегистрированы в контейнере бинов Spring с помощью
+кастомного регистратора:
+org.oa.ajax_rest_demo.converters.CustomFormatterRegistrar
+
+В проекте реализованы сущности для Пользователя и Типов ролей пользователя.
+На данный момент существует три роли:
+USER("ROLE_USER"),
+CUSTOMER("ROLE_CUSTOMER"),
+ADMIN("ROLE_ADMIN");
+роли могут быть расширены в перечислении: UserRoleType
+
+В базе данных используются три пользователя (login, password):
+admin, admin 
+user, user
+cust, cust
+Для добавления пользователя в систему нужно это делать в MySQL Workbench.
+Для этого надо добавить запись в таблице users, указав имя пользователя, 1 в поле enabled и
+для генерации пароля в зашифрованом виде создан класс
+/ajax-rest-demo/src/main/java/org/oa/ajax_rest_demo/utils/PasswordEncoderGenerator.java
+работающий в консольном режиме.
+В строку password = "cust"; надо установить пароль и при запуске класс сгенерирует 10 вариантов
+зашифрованного пароля.
+Используется генератор Spring org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.
+
+Реализована корзина (basket), а так же репозиторий и контроллер для нее.
+
+Для роли CUSTOMER доступна работа с корзиной (добавление, удаление товаров из корзины).
+Для роли USER так же доступна возможность изменять данные о товаре (update).
+Для роли ADMIN доступны возможности добавлять и удалять товары.
+
+Из за нехватки времени не закончена работа над валидацией данных при обновлении количества
+покупаемых одновременно товаров одной номенклатуры. Для этого надо реализовать BasketValidator,
+который будет наследовать org.springframework.validation.Validator.
+Сейчас валидация захардкожена в
+org.oa.ajax_rest_demo.controllers.BasketController.update(Basket, Model, SessionStatus)
+выкидывает NullPointer :(

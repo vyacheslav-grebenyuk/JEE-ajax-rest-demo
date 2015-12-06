@@ -23,9 +23,6 @@
 	
 	<context:property-placeholder location="WEB-INF/jdbc.properties"/>
 
-<!-- 	
-	<mvc:annotation-driven />
- -->    
 	<mvc:annotation-driven conversion-service="conversionService"/>
 	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
   		<property name="formatterRegistrars">
@@ -63,7 +60,10 @@
        			<value>org.oa.ajax_rest_demo.model.Tools</value>
         		<value>org.oa.ajax_rest_demo.model.Food</value>
         		<value>org.oa.ajax_rest_demo.model.Goods</value>
-     		</list>
+        		<value>org.oa.ajax_rest_demo.model.Users</value>
+        		<value>org.oa.ajax_rest_demo.model.UserRoles</value>
+        		<value>org.oa.ajax_rest_demo.model.Basket</value>
+     		</list>     		
  		</property>
  		<property name="hibernateProperties">
 			<props>

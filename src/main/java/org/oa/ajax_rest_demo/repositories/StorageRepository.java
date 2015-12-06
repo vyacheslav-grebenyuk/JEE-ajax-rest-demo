@@ -11,7 +11,23 @@ public class StorageRepository {
 	private FoodRepository foodRepository;
 	@Autowired
 	private ToolsRepository toolsRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private BasketRepository basketRepository;
 	
+	public UserRepository getUserRepository() {
+		return userRepository;
+	}
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+	public BasketRepository getBasketRepository() {
+		return basketRepository;
+	}
+	public void setBasketRepository(BasketRepository basketRepository) {
+		this.basketRepository = basketRepository;
+	}
 	public void setPetRepository(PetRepository petRepository) {
 		this.petRepository = petRepository;
 	}

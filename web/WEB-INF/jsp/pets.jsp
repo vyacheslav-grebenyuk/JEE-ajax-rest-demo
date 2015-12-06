@@ -1,8 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" session = "true" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %> 
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -12,6 +13,7 @@
 </head>
 <body>
 <h1>Pets list</h1>
+<p>Hello, <sec:authentication property="principal.username" />!</p>
 	<form:form method="get" action="pets/byname" >
     	Filter by name : 
 		<input type="text" name="filterPetByName" /> 
@@ -54,16 +56,25 @@
             	<td>${pet.quantity}</td>
             	<td>
    			 	<a href="${tobasketUrl}" >Add to basket</a>
+   			 	<sec:authorize access="hasRole('USER')">
    			 	<a href="${updateUrl}" >Update</a>
+   			 	<sec:authorize access="hasRole('ADMIN')">
    			 	<a href="${deleteUrl}" onclick="return confirm('Are you sure?')" >Delete</a>
+   			 	</sec:authorize>
+   			 	</sec:authorize>
    			 </td>
         	</tr>
     	</c:forEach>
 	</table>
-	<spring:url value="/cont/pets/add.html" var="addUrl"/>
+	<sec:authorize access="hasRole('ADMIN')">
+	<spring:url value="/cont/pets/add.html" var="addUrl"/>	
 	<a href="${addUrl}" >Add</a>
+	</sec:authorize>
+	<br />
 	<spring:url value="/" var="indexUrl"/>
 	<a href="${indexUrl}" >Main page</a>
+	<spring:url value="../j_spring_security_logout" var="logoutUrl" />
+	<a href="${logoutUrl}">Log Out</a>
 	
     <c:if test="${requestScope.error != null}">
     	<script>

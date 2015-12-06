@@ -1,11 +1,15 @@
 package org.oa.ajax_rest_demo.controllers;
 
 import org.apache.log4j.Logger;
+import org.oa.ajax_rest_demo.model.Basket;
 import org.oa.ajax_rest_demo.model.Food;
 import org.oa.ajax_rest_demo.model.Pet;
 import org.oa.ajax_rest_demo.model.Tools;
+import org.oa.ajax_rest_demo.model.Users;
 import org.oa.ajax_rest_demo.repositories.StorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +31,7 @@ import javax.validation.Valid;
 @SessionAttributes({"foodList", "toolsList"})
 @RequestMapping("/cont/pets")
 public class PetController {
-	private static final Logger log = Logger.getLogger(PetController.class);
+	private static final Logger LOG = Logger.getLogger(PetController.class);
 
     @Autowired
     private StorageRepository storageRepository;
@@ -40,7 +44,7 @@ public class PetController {
 	public ModelAndView getAll(Model model) {
 		ModelAndView mav = new ModelAndView("pets");
 		List<Pet> pets = storageRepository.getPetRepository().findAll();
-		log.info("list " + pets);
+		LOG.info("list " + pets);
 		mav.addObject("petslist", pets);
 		return mav;
 	}
@@ -54,7 +58,7 @@ public class PetController {
 	@RequestMapping(value = "/add.html", method = RequestMethod.POST)
 	public String add(@Valid Pet pet, SessionStatus status) {
 		Pet newPet = storageRepository.getPetRepository().create(pet);
-		log.info("add " + newPet);
+		LOG.info("add " + newPet);
 		status.setComplete();
 		return "redirect:/cont/pets";
 	}
@@ -71,7 +75,7 @@ public class PetController {
 	@RequestMapping(value = "/update.html", method = RequestMethod.POST)
 	public String update(@Valid Pet pet, SessionStatus status) {
 		Pet newPet = storageRepository.getPetRepository().update(pet);
-		log.info("update " + newPet);
+		LOG.info("update " + newPet);
 		status.setComplete();
 		return "redirect:/cont/pets";
 	}
@@ -82,7 +86,19 @@ public class PetController {
 		Pet pet = storageRepository.getPetRepository().findById(id);
 		storageRepository.getPetRepository().delete(pet);
 		mav.addObject("petslist", storageRepository.getPetRepository().findAll());
-		log.info("delete " + pet);
+		LOG.info("delete " + pet);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/tobasket.html", method = RequestMethod.GET)
+	public ModelAndView toBasket(@RequestParam(value = "id") int id) {
+		ModelAndView mav = new ModelAndView("redirect:/shop.html");
+		Pet pet = storageRepository.getPetRepository().findById(id);
+		String login = ((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+		Users user = storageRepository.getUserRepository().findByLogin(login);
+		Basket good = new Basket(user, pet, 1);
+		Basket newGood = storageRepository.getBasketRepository().create(good);
+		LOG.info("add pet to basket: " + newGood + "->" + pet);
 		return mav;
 	}
 	
@@ -93,7 +109,7 @@ public class PetController {
 						 @RequestParam("end") long end) {
 		ModelAndView mav = new ModelAndView("pets");
 		List<Pet> pets = storageRepository.getPetRepository().findAtPriceRange(start, end);
-		log.info("list by price range" + pets);
+		LOG.info("list by price range" + pets);
     	mav.addObject("petslist", pets);
 		return mav;
 	}
@@ -104,7 +120,7 @@ public class PetController {
     ModelAndView getByName(@RequestParam(value = "filterPetByName") String filterPetByName) {
 		ModelAndView mav = new ModelAndView("pets");
 		List<Pet> pets = storageRepository.getPetRepository().findByName(filterPetByName);
-		log.info("list by name" + pets);
+		LOG.info("list by name" + pets);
     	mav.addObject("petslist", pets);
 		return mav;
 	}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context"
+               xmlns:security="http://www.springframework.org/schema/security"
+              xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+ 	<security:http disable-url-rewriting="true" use-expressions="true">
+		<security:headers disabled="true"/>
+		<security:csrf disabled="true"/>
+
+		<security:intercept-url pattern="/login" access="permitAll()"/>
+		<security:intercept-url pattern="/**" access="isAuthenticated()"/>
+		
+		<security:form-login login-page="/login" default-target-url="/" always-use-default-target="true" authentication-failure-url="/login?err=1" />
+		<security:logout logout-url="/j_spring_security_logout"/>
+	</security:http>
+	
+	<bean id="userDetailsService" class="org.oa.ajax_rest_demo.services.CustomUserDetailsService"/>
+	
+	<bean id="encoder" 
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+		<constructor-arg name="strength" value="11" />
+  	</bean>
+  	
+	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider user-service-ref="userDetailsService">
+			<security:password-encoder ref="encoder" />	    
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+	<security:global-method-security pre-post-annotations="enabled" />  
+</beans>

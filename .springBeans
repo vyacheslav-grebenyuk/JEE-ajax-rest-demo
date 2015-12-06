@@ -7,8 +7,10 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
+		<config>web/WEB-INF/securityContext.xml</config>
 	</configs>
 	<autoconfigs>
+		<config>target/m2e-wtp/web-resources/WEB-INF/mvc-dispatcher-servlet.xml</config>
 	</autoconfigs>
 	<configSets>
 	</configSets>

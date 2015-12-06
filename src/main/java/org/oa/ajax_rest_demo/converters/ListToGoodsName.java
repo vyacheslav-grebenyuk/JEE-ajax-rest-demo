@@ -3,9 +3,7 @@ package org.oa.ajax_rest_demo.converters;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.oa.ajax_rest_demo.model.Food;
 import org.oa.ajax_rest_demo.model.Goods;
-import org.oa.ajax_rest_demo.model.Tools;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
